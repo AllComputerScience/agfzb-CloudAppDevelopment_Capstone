@@ -46,6 +46,45 @@
           <a class="nav-item nav-link disabled" href="#">Thanks!</a>
         </div>
       </div>
+
+      {% if user.is_authenticated %}
+      <div class="navbar navbar-light bg-light justify-content-between">
+        <h4>Hey, {{user.username}}. We won't hold you |</h4>
+        <button type="button" class="btn btn-outline-primary ml-1">
+          Log Out
+        </button>
+      </div>
+      {% else %}
+      <div class="navbar navbar-light bg-light justify-content-between">
+        <form class="form-inline">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Username"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+            />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Password"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <button type="button" class="btn btn-outline-primary ml-1">
+            Sign Up
+          </button>
+          <button type="button" class="btn btn-outline-secondary ml-2">
+            Log In
+          </button>
+        </form>
+      </div>
+      {% endif %}
     </nav>
     <div class="content">{% block content %} {% endblock %}</div>
   </body>
