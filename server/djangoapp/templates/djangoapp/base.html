@@ -56,7 +56,8 @@
       </div>
       {% else %}
       <div class="navbar navbar-light bg-light justify-content-between">
-        <form class="form-inline">
+        <form class="form-inline" method="POST">
+          {% csrf_token %}
           <div class="input-group">
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">@</span>
@@ -64,6 +65,7 @@
             <input
               type="text"
               class="form-control"
+              name="Username"
               placeholder="Username"
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -71,17 +73,32 @@
             <input
               type="text"
               class="form-control"
+              name="Password"
               placeholder="Password"
               aria-label="Password"
               aria-describedby="basic-addon1"
             />
           </div>
-          <button type="button" class="btn btn-outline-primary ml-1">
+          <script>
+            // Neccessary to circumvent the extra quotation marks error that are needed to insert this django syntax
+            // It could have just been done as a styled link, but I wanted to use a button.
+            // I wouldn't use this script section for compatibility on something meant for production
+            account_form = () => {
+              window.location.href = "{% url 'djangoapp:register_account' %}";
+            };
+          </script>
+          <button
+            type="button"
+            class="btn btn-outline-primary ml-1"
+            onclick="account_form()"
+          >
             Sign Up
           </button>
-          <button type="button" class="btn btn-outline-secondary ml-2">
-            Log In
-          </button>
+          <input
+            type="submit"
+            class="btn btn-outline-secondary ml-2"
+            value="Log In"
+          />
         </form>
       </div>
       {% endif %}

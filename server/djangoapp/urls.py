@@ -13,9 +13,9 @@ urlpatterns = [
 
     path(route='contact/', view=views.contact_page, name='contact_us'),
 
-    # path for registration
+    path(route='register/', view=views.registration_page, name='register_account'),
 
-    # path for login
+    path(route='login/', view=views.login_request, name='login'),
 
     # path for logout
 
