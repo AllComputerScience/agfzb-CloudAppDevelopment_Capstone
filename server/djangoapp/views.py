@@ -44,9 +44,12 @@ def login_request(request):
     return HttpResponse(template.render(context, request))
 
 
-# Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
+def logout_request(request):
+
+    if not login_function(request):
+        logout(request)
+    context = {}
+    return render(request, 'djangoapp/logout_page.html', context)
 
 def registration_page(request):
     
@@ -99,6 +102,7 @@ def login_function(request):
             
             if user is not None:
                 login(request, user)
+                return True
             else:
                 print('The user did not supply valid credentials, or did not request a log in - thus, they were not logged in.')
     except Exception as error:

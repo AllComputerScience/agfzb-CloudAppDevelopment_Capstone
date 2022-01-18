@@ -50,7 +50,19 @@
       {% if user.is_authenticated %}
       <div class="navbar navbar-light bg-light justify-content-between">
         <h4>Hey, {{user.username}}. We won't hold you |</h4>
-        <button type="button" class="btn btn-outline-primary ml-1">
+        <script>
+          // Neccessary to circumvent the extra quotation marks error that are needed to insert this django syntax
+          // It could have just been done as a styled link, but I wanted to use a button.
+          // I wouldn't use this script section for compatibility on something meant for production
+          logout = () => {
+            window.location.href = "{% url 'djangoapp:logout' %}";
+          };
+        </script>
+        <button
+          type="button"
+          class="btn btn-outline-primary ml-1"
+          onclick="logout()"
+        >
           Log Out
         </button>
       </div>
