@@ -1,5 +1,5 @@
 /**
- * Get all dealerships
+ * This is not an IBM template. It was written by Eric Dee.
  */
 
 const Cloudant = require("@cloudant/cloudant");
@@ -14,9 +14,16 @@ async function main(params) {
 
   let databases = cloudant.db.list();
   let dealerships_db = cloudant.db.use("dealerships");
+  let reviews_db = cloudant.db.use("reviews");
 
-  console.log(await get_dealerships(dealerships_db));
+  console.log(await get_dealerships(reviews_db));
   console.log(await get_dealerships_by_st(dealerships_db, "CA"));
+  post_review_for_dealership(
+    reviews_db,
+    "They chased a rabbit and caught a whale. Now they are trapped forever.",
+    15
+  );
+  console.log(await get_reviews_for_dealership(reviews_db, 15));
 
   //   try {
   //     const response = await dealerships.list({ include_docs: true });
@@ -31,9 +38,9 @@ async function main(params) {
   //   }
 }
 
-function get_dealerships(dealerships) {
+function get_dealerships(dealerships_db) {
   return new Promise((resolve, reject) => {
-    dealerships
+    dealerships_db
       .list({ include_docs: true })
       .then((response) => {
         resolve(
@@ -48,9 +55,9 @@ function get_dealerships(dealerships) {
   });
 }
 
-function get_dealerships_by_st(dealerships, st) {
+function get_dealerships_by_st(dealerships_db, st) {
   return new Promise((resolve, reject) => {
-    dealerships
+    dealerships_db
       .list({ include_docs: true })
       .then((response) => {
         resolve(
@@ -64,6 +71,52 @@ function get_dealerships_by_st(dealerships, st) {
       .catch((error) => {
         reject({ e: error });
       });
+  });
+}
+
+function get_reviews_for_dealership(reviews_db, dealership) {
+  return new Promise((resolve, reject) => {
+    reviews_db
+      .list({ include_docs: true })
+      .then((response) => {
+        resolve(
+          response.rows.filter((r) => {
+            if (r.doc.review.dealership === dealership) {
+              let item = r.doc;
+              return item.doc;
+            }
+          })
+        );
+      })
+      .catch((error) => {
+        reject({ e: error });
+      });
+  });
+}
+
+function post_review_for_dealership(reviews_db, review, dealership) {
+  var review = `{
+    "review":
+        {
+            "id": 1114,
+            "name": "Placeholder",
+            "dealership": ${dealership},
+            "review": "${review}",
+            "purchase": false,
+            "another": "field",
+            "purchase_date": "02/16/2021",
+            "car_make": "Audi",
+            "car_model": "Car",
+            "car_year": 2021
+        }
+    }`;
+
+  json = JSON.parse(review);
+
+  return new Promise((resolve, reject) => {
+    resolve(reviews_db.insert(json, (error, body) => {})).catch((error) => {
+      reject({ e: error });
+    });
   });
 }
 
