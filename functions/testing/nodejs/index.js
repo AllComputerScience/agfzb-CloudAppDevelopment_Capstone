@@ -2,6 +2,7 @@
  * Get all dealerships
  */
 
+const cloudant = require("@cloudant/cloudant");
 const Cloudant = require("@cloudant/cloudant");
 
 async function main(params) {
@@ -11,32 +12,40 @@ async function main(params) {
       iamauth: { iamApiKey: "ruE6-pq2AVsBf4Vu5ZX0oeefdWhwDlw_oCV132KbdCeo" },
     },
   });
-  try {
-    let dbList = await cloudant.db.list();
-    let dealerships = cloudant.db.use("dealerships");
-    const response = await dealerships.list({ include_docs: true });
-    const docs = response.rows.map((r) => {
-      return r.doc;
-    });
-    console.log(docs);
 
-    return { dbs: dbList };
-  } catch (error) {
-    return { error: error.description };
-  }
+  let databases = await cloudant.db.list();
+  let dealerships_db = cloudant.db.use("dealerships");
+
+  console.log(await get_dealerships(dealerships_db));
+
+  //   try {
+  //     const response = await dealerships.list({ include_docs: true });
+  //     const docs = response.rows.map((r) => {
+  //       return r.doc;
+  //     });
+  //     console.log(docs);
+
+  //     return { docs };
+  //   } catch (error) {
+  //     return { error: error.description };
+  //   }
 }
 
-function getDbs(cloudant, dbList) {
-  cloudant.db
-    .list()
-    .then((body) => {
-      body.forEach((db) => {
-        dbList.push(db);
+function get_dealerships(dealerships) {
+  return new Promise((resolve, reject) => {
+    dealerships
+      .list({ include_docs: true })
+      .then((response) => {
+        resolve(
+          response.rows.map((r) => {
+            return r.doc;
+          })
+        );
+      })
+      .catch((error) => {
+        reject({ e: error });
       });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
 }
 
-main();
+console.log(main());
