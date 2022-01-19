@@ -2,7 +2,6 @@
  * Get all dealerships
  */
 
-const cloudant = require("@cloudant/cloudant");
 const Cloudant = require("@cloudant/cloudant");
 
 async function main(params) {
@@ -13,10 +12,11 @@ async function main(params) {
     },
   });
 
-  let databases = await cloudant.db.list();
+  let databases = cloudant.db.list();
   let dealerships_db = cloudant.db.use("dealerships");
 
   console.log(await get_dealerships(dealerships_db));
+  console.log(await get_dealerships_by_st(dealerships_db, "CA"));
 
   //   try {
   //     const response = await dealerships.list({ include_docs: true });
@@ -48,4 +48,23 @@ function get_dealerships(dealerships) {
   });
 }
 
-console.log(main());
+function get_dealerships_by_st(dealerships, st) {
+  return new Promise((resolve, reject) => {
+    dealerships
+      .list({ include_docs: true })
+      .then((response) => {
+        resolve(
+          response.rows.filter((r) => {
+            if (r.doc.st === st) {
+              return r.doc;
+            }
+          })
+        );
+      })
+      .catch((error) => {
+        reject({ e: error });
+      });
+  });
+}
+
+main();
