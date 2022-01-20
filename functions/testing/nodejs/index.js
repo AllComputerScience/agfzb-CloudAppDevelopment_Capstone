@@ -6,9 +6,9 @@ const Cloudant = require("@cloudant/cloudant");
 
 async function main(params) {
   const cloudant = Cloudant({
-    url: "https://apikey-v2-184c0dmvy0v8vo4799mbcneylajckl4ao0eijnhp7op4:59a55164760e2d6de376e124dc43c0f5@9ca0d435-dbf3-4688-8c65-1a27b1a31ee6-bluemix.cloudantnosqldb.appdomain.cloud",
+    url: "https://apikey-v2-1hyf4mss3tk31el1a7g5h6o09i4inkg0ouxq807qx1ao:667051fcebc844c23862b4c073d5f3cf@816343f5-b793-4ce5-923b-45955dd61a3e-bluemix.cloudantnosqldb.appdomain.cloud",
     plugins: {
-      iamauth: { iamApiKey: "ruE6-pq2AVsBf4Vu5ZX0oeefdWhwDlw_oCV132KbdCeo" },
+      iamauth: { iamApiKey: "r29o9cU8fj0NcNBilXS7phmT-B6W9AorI_b5U01qoczl" },
     },
   });
 
@@ -16,14 +16,16 @@ async function main(params) {
   let dealerships_db = cloudant.db.use("dealerships");
   let reviews_db = cloudant.db.use("reviews");
 
-  console.log(await get_dealerships(reviews_db));
-  console.log(await get_dealerships_by_st(dealerships_db, "CA"));
-  post_review_for_dealership(
-    reviews_db,
-    "They chased a rabbit and caught a whale. Now they are trapped forever.",
-    15
-  );
-  console.log(await get_reviews_for_dealership(reviews_db, 15));
+  console.log(await action_get_all_reviews(reviews_db));
+  console.log("End of all reviews! **************** \n\n\n\n");
+  console.log(await action_get_all_dealerships(dealerships_db));
+  console.log("End of all dealerships! **************** \n\n\n\n");
+
+  // post_review_for_dealership(reviews_db, "A test review.", 15);
+
+  // console.log(test2);
+  // console.log(await get_dealerships_by_st(dealerships_db, "CA"));
+  // console.log(await get_reviews_for_dealership(reviews_db, 15));
 
   //   try {
   //     const response = await dealerships.list({ include_docs: true });
@@ -38,9 +40,9 @@ async function main(params) {
   //   }
 }
 
-function get_dealerships(dealerships_db) {
+function get_database(database) {
   return new Promise((resolve, reject) => {
-    dealerships_db
+    database
       .list({ include_docs: true })
       .then((response) => {
         resolve(
@@ -53,6 +55,24 @@ function get_dealerships(dealerships_db) {
         reject({ e: error });
       });
   });
+}
+
+async function action_get_all_reviews(reviews_db) {
+  let all_reviews = await get_database(reviews_db);
+  let result = {};
+  all_reviews.forEach((item) => {
+    result[item.review.id] = item.review;
+  });
+  return { json_reviews: JSON.stringify(result) };
+}
+
+async function action_get_all_dealerships(dealerships_db) {
+  let all_dealerships = await get_database(dealerships_db);
+  let result = {};
+  all_dealerships.forEach((item) => {
+    result[item.id] = item;
+  });
+  return { json_dealerships: JSON.stringify(result) };
 }
 
 function get_dealerships_by_st(dealerships_db, st) {
@@ -95,23 +115,21 @@ function get_reviews_for_dealership(reviews_db, dealership) {
 }
 
 function post_review_for_dealership(reviews_db, review, dealership) {
-  var review = `{
-    "review":
-        {
-            "id": 1114,
-            "name": "Placeholder",
-            "dealership": ${dealership},
-            "review": "${review}",
-            "purchase": false,
-            "another": "field",
-            "purchase_date": "02/16/2021",
-            "car_make": "Audi",
-            "car_model": "Car",
-            "car_year": 2021
-        }
-    }`;
+  var review = `{ "review": {
+    "id":1114,
+    "name":"Placeholder",
+    "dealership":${dealership},
+    "review":"${review}",
+    "purchase":false,
+    "another":"field",
+    "purchase_date":"02/16/2021",
+    "car_make":"Audi",
+    "car_model":"Car",
+    "car_year":2021
+  }}`;
 
   json = JSON.parse(review);
+  console.log(json);
 
   return new Promise((resolve, reject) => {
     resolve(reviews_db.insert(json, (error, body) => {})).catch((error) => {
