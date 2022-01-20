@@ -1,4 +1,4 @@
-# The documentation for "Cloudant" is not adequate.
+# The documentation for "Cloudant" is too sparse, and the examples were too involved.
 # As a result, all of the database functions reside in nodejs/index.js instead.
 
 from cloudant.client import Cloudant

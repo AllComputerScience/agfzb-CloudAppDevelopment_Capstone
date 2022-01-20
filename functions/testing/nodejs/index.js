@@ -16,12 +16,16 @@ async function main(params) {
   let dealerships_db = cloudant.db.use("dealerships");
   let reviews_db = cloudant.db.use("reviews");
 
+  post_review_for_dealership(reviews_db, "A test review 2.", 15);
+
   console.log(await action_get_all_reviews(reviews_db));
   console.log("End of all reviews! **************** \n\n\n\n");
   console.log(await action_get_all_dealerships(dealerships_db));
   console.log("End of all dealerships! **************** \n\n\n\n");
-
-  // post_review_for_dealership(reviews_db, "A test review.", 15);
+  console.log(await action_get_all_dealerships_by_st(dealerships_db, "CA"));
+  console.log("End of all dealerships by state! **************** \n\n\n\n");
+  console.log(await action_get_reviews_for_a_dealership(reviews_db, 15));
+  console.log("End of reviews for the dealership! **************** \n\n\n\n");
 
   // console.log(test2);
   // console.log(await get_dealerships_by_st(dealerships_db, "CA"));
@@ -75,60 +79,40 @@ async function action_get_all_dealerships(dealerships_db) {
   return { json_dealerships: JSON.stringify(result) };
 }
 
-function get_dealerships_by_st(dealerships_db, st) {
-  return new Promise((resolve, reject) => {
-    dealerships_db
-      .list({ include_docs: true })
-      .then((response) => {
-        resolve(
-          response.rows.filter((r) => {
-            if (r.doc.st === st) {
-              return r.doc;
-            }
-          })
-        );
-      })
-      .catch((error) => {
-        reject({ e: error });
-      });
+async function action_get_all_dealerships_by_st(dealerships_db, st) {
+  let all_dealerships = await get_database(dealerships_db);
+  let result = {};
+  all_dealerships.forEach((item) => {
+    if (item.st === st) result[item.id] = item;
   });
+  return { json_dealerships: JSON.stringify(result) };
 }
 
-function get_reviews_for_dealership(reviews_db, dealership) {
-  return new Promise((resolve, reject) => {
-    reviews_db
-      .list({ include_docs: true })
-      .then((response) => {
-        resolve(
-          response.rows.filter((r) => {
-            if (r.doc.review.dealership === dealership) {
-              let item = r.doc;
-              return item.doc;
-            }
-          })
-        );
-      })
-      .catch((error) => {
-        reject({ e: error });
-      });
+async function action_get_reviews_for_a_dealership(reviews_db, dealership) {
+  let all_reviews = await get_database(reviews_db);
+  let result = {};
+  all_reviews.forEach((item) => {
+    if (item.dealership === dealership) result[item.id] = item;
   });
+  return { json_reviews: JSON.stringify(result) };
 }
 
-function post_review_for_dealership(reviews_db, review, dealership) {
-  var review = `{ "review": {
-    "id":1114,
-    "name":"Placeholder",
-    "dealership":${dealership},
-    "review":"${review}",
-    "purchase":false,
-    "another":"field",
-    "purchase_date":"02/16/2021",
-    "car_make":"Audi",
-    "car_model":"Car",
-    "car_year":2021
-  }}`;
+function post_review_for_dealership(reviews_db, _review, _dealership) {
+  var review = {
+    id: 1114,
+    name: "Placeholder",
+    dealership: _dealership,
+    review: _review,
+    purchase: false,
+    another: "field",
+    purchase_date: "02/16/2021",
+    car_make: "Audi",
+    car_model: "Car",
+    car_year: 2021,
+  };
 
-  json = JSON.parse(review);
+  action_friendly_string = JSON.stringify(review);
+  json = JSON.parse(action_friendly_string);
   console.log(json);
 
   return new Promise((resolve, reject) => {
