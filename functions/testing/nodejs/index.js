@@ -24,8 +24,16 @@ async function main(params) {
   console.log("End of all dealerships! **************** \n\n\n\n");
   console.log(await action_get_all_dealerships_by_st(dealerships_db, "CA"));
   console.log("End of all dealerships by state! **************** \n\n\n\n");
-  console.log(await action_get_reviews_for_a_dealership(reviews_db, 15));
+  console.log(
+    await action_get_reviews_for_a_dealership(reviews_db, parseInt("15"))
+  );
   console.log("End of reviews for the dealership! **************** \n\n\n\n");
+
+  /* Endpoints */
+  // https://5c90c98b.us-south.apigw.appdomain.cloud/api/dealership/
+  // https://5c90c98b.us-south.apigw.appdomain.cloud/api/dealership/state?st=CA
+  // https://5c90c98b.us-south.apigw.appdomain.cloud/api/review/dealership?dealership=15
+  // https://5c90c98b.us-south.apigw.appdomain.cloud/api/review?dealership=15&review=A test
 
   // console.log(test2);
   // console.log(await get_dealerships_by_st(dealerships_db, "CA"));
@@ -91,15 +99,19 @@ async function action_get_all_dealerships_by_st(dealerships_db, st) {
 async function action_get_reviews_for_a_dealership(reviews_db, dealership) {
   let all_reviews = await get_database(reviews_db);
   let result = {};
+  let count = 0;
   all_reviews.forEach((item) => {
-    if (item.dealership === dealership) result[item.id] = item;
+    if (item.dealership === dealership) {
+      result[count] = item;
+      count++;
+    }
   });
   return { json_reviews: JSON.stringify(result) };
 }
 
 function post_review_for_dealership(reviews_db, _review, _dealership) {
   var review = {
-    id: 1114,
+    id: 1114, // This isn't really used as Cloudant autoincrements
     name: "Placeholder",
     dealership: _dealership,
     review: _review,
