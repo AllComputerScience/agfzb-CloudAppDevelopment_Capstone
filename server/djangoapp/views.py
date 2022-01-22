@@ -90,9 +90,30 @@ def get_dealerships(request):
 # def get_dealer_details(request, dealer_id):
 # ...
 
+def get_dealer_details(request, dealership_id):
+    if request.method == "GET":
+        url = "https://5c90c98b.us-south.apigw.appdomain.cloud/api/review/dealership"
+        reviews = get_dealer_reviews_from_cf(url, dealership_id, 'cATEkEA-WpY2rQadoGOcQaJoN-lcBzWVihPRXK8EOuN4')
+        review_names = ' '.join([review.name for review in reviews])
+        return HttpResponse(review_names)
+
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
+
+from django.contrib.auth.decorators import login_required
+
+def add_review(request, dealership_id, _review):
+    json_payload = dict()
+    url = "https://5c90c98b.us-south.apigw.appdomain.cloud/api/review"
+    review = dict()
+    review["review"] = _review
+    review["dealership"] = dealership_id
+    json_payload["review"] = review
+    print(json_payload)
+    result = post_request(url, json_payload)
+    return HttpResponse(result)
+
 
 def login_function(request):
 

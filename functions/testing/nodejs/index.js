@@ -121,6 +121,7 @@ function post_review_for_dealership(reviews_db, _review, _dealership) {
     car_make: "Audi",
     car_model: "Car",
     car_year: 2021,
+    sentiment: "Init",
   };
 
   action_friendly_string = JSON.stringify(review);
