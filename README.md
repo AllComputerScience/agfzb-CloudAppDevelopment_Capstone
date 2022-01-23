@@ -1,6 +1,6 @@
 # Capstone
 
-The completed project can be found here: http://ericcapstone.mybluemix.net/dealership/
+The completed project can be found hosted through the IBMCloud Servers here: http://ericcapstone.mybluemix.net/dealership/
 
 This project was built from a forked template consisting of mostly YAML settings to install from IBM Cloud Foundary at the CLI.
 
