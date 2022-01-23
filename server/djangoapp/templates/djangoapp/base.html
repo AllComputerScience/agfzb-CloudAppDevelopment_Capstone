@@ -20,7 +20,9 @@
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Dealership</a>
+      <a class="navbar-brand" href="{% url 'djangoapp:index' %}"
+        >Dealership Reviews</a
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -48,6 +50,11 @@
       </div>
 
       {% if user.is_authenticated %}
+      <a
+        class="nav-item nav-link active bg-dark m-4 p-3"
+        href="{% url 'djangoapp:add_review' %}"
+        >Add a review <span class="sr-only">(current)</span></a
+      >
       <div class="navbar navbar-light bg-light justify-content-between">
         <h4>Hey, {{user.username}}. We won't hold you |</h4>
         <script>
@@ -83,7 +90,7 @@
               aria-describedby="basic-addon1"
             />
             <input
-              type="text"
+              type="password"
               class="form-control"
               name="Password"
               placeholder="Password"

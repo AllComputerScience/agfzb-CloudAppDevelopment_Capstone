@@ -16,7 +16,16 @@ async function main(params) {
   let dealerships_db = cloudant.db.use("dealerships");
   let reviews_db = cloudant.db.use("reviews");
 
-  post_review_for_dealership(reviews_db, "A test review 2.", 15);
+  post_review_for_dealership(
+    reviews_db,
+    "2012",
+    "Mazda",
+    "6",
+    "01/01/2012",
+    "A test review 2.",
+    15,
+    "positive"
+  );
 
   console.log(await action_get_all_reviews(reviews_db));
   console.log("End of all reviews! **************** \n\n\n\n");
@@ -109,19 +118,28 @@ async function action_get_reviews_for_a_dealership(reviews_db, dealership) {
   return { json_reviews: JSON.stringify(result) };
 }
 
-function post_review_for_dealership(reviews_db, _review, _dealership) {
+function post_review_for_dealership(
+  reviews_db,
+  car_yr,
+  make,
+  model,
+  pDate,
+  _review,
+  _dealership,
+  sentiment
+) {
   var review = {
-    id: 1114, // This isn't really used as Cloudant autoincrements
+    id: 1114,
     name: "Placeholder",
     dealership: _dealership,
     review: _review,
     purchase: false,
     another: "field",
-    purchase_date: "02/16/2021",
-    car_make: "Audi",
-    car_model: "Car",
-    car_year: 2021,
-    sentiment: "Init",
+    purchase_date: pDate,
+    car_make: make,
+    car_model: model,
+    car_year: car_yr,
+    sentiment: sentiment,
   };
 
   action_friendly_string = JSON.stringify(review);

@@ -9,6 +9,7 @@ from .models import CarDealer, DealerReview
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
 
+
 def get_request(url, **kwargs):
 
     print(kwargs)
@@ -23,8 +24,6 @@ def get_request(url, **kwargs):
     except:
         print("Network exception occurred")
         return "Data could not be collected"
-
-
 
 
 def get_dealers_from_cf(url, **kwargs):
@@ -47,12 +46,8 @@ def get_dealers_from_cf(url, **kwargs):
         return error
 
 
-
-# Create a `post_request` to make HTTP POST requests
-# e.g., response = requests.post(url, params=kwargs, json=payload)
-
-
 def post_request(url, json_payload, **kwargs):
+    print(json_payload["review"]["dealership_review"])
     result = requests.post(url, json_payload["review"])
     return result
 
@@ -74,6 +69,7 @@ def analyze_review_sentiments(review, api_key):
         print(result.reason)
         return result
 
+
 def get_dealer_reviews_from_cf(url, dealership_id, api_key="Init"):
 
     results = []
@@ -88,19 +84,9 @@ def get_dealer_reviews_from_cf(url, dealership_id, api_key="Init"):
                                             review=reviews[key]['review'], purchase_date=reviews[key]['purchase_date'],
                                             car_make=reviews[key]['car_make'], car_model=reviews[key]['car_model'], 
                                             car_year=reviews[key]['car_year'], sentiment=reviews[key]['sentiment'], id=reviews[key]['id'])
-                
                 results.append(reviews_obj)
-
         return results
     except Exception as error:
         return error
-
-
-
-# Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
-# - Call get_request() with specified arguments
-# - Get the returned sentiment label such as Positive or Negative
-
 
 
